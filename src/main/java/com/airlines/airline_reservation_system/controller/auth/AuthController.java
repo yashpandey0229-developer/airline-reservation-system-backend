@@ -1,10 +1,10 @@
 package com.airlines.airline_reservation_system.controller.auth;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import com.airlines.airline_reservation_system.entity.Role;
+import com.airlines.airline_reservation_system.entity.User;
+import com.airlines.airline_reservation_system.repository.RoleRepository;
+import com.airlines.airline_reservation_system.repository.UserRepository;
+import com.airlines.airline_reservation_system.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.airlines.airline_reservation_system.entity.Role;
-import com.airlines.airline_reservation_system.entity.User;
-import com.airlines.airline_reservation_system.repository.RoleRepository;
-import com.airlines.airline_reservation_system.repository.UserRepository;
-import com.airlines.airline_reservation_system.util.JwtUtil;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -31,8 +30,9 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
-private JwtUtil jwtUtil; // <-- ADD THIS
+    private JwtUtil jwtUtil;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
@@ -51,21 +51,18 @@ private JwtUtil jwtUtil; // <-- ADD THIS
         return ResponseEntity.ok("User registered successfully!");
     }
 
-   
+    
     @PostMapping("/login")
-public ResponseEntity<?> loginUser(@RequestBody User loginDetails) {
-    User user = userRepository.findByUsername(loginDetails.getUsername()).orElse(null);
+    public ResponseEntity<?> loginUser(@RequestBody User loginDetails) {
+        User user = userRepository.findByUsername(loginDetails.getUsername()).orElse(null);
 
-    if (user != null && passwordEncoder.matches(loginDetails.getPassword(), user.getPassword())) {
-        // If login is successful, generate a JWT
-        String token = jwtUtil.generateToken(user.getUsername());
+        if (user != null && passwordEncoder.matches(loginDetails.getPassword(), user.getPassword())) {
+            String token = jwtUtil.generateToken(user.getUsername());
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            return ResponseEntity.ok(response);
+        }
 
-        // Return the token in the response
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(401).body("Error: Invalid username or password");
     }
-
-    return ResponseEntity.status(401).body("Error: Invalid username or password");
-}
 }
