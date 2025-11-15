@@ -29,16 +29,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+        
         System.out.println("--- LOADING FINAL SECURITY CONFIG ---"); 
-
+        
         http
             .cors(withDefaults())
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())
-
+            
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/flights/**").permitAll()

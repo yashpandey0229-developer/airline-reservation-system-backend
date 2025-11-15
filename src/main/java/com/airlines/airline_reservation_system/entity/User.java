@@ -9,8 +9,8 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data               // <-- YEH SABSE ZAROORI HAI
-@NoArgsConstructor      // <-- Yeh bhi add karein
-@AllArgsConstructor     // <-- Yeh bhi add karein
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
